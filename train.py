@@ -26,7 +26,7 @@ def parse_args():
     # model
     parser.add_argument("--model", type=str, default="bert-base-uncased")
     parser.add_argument("--num_classes", type=int, default=2)
-    parser.add_argument("--dropout", type=float, default=0.1)
+    parser.add_argument("--dropout", type=float, default=0.0)
     # training
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--lr", type=float, default=2e-5)
