@@ -28,7 +28,7 @@ class GLUEDataModule(LightningDataModule):
         dataset = load_dataset("glue", self.config.dataset)
         keys = glue_input_template[self.config.dataset]
         # tokenization
-        tokenizer = AutoTokenizer.from_pretrained(self.config.model)
+        tokenizer = AutoTokenizer.from_pretrained(self.config.model_name)
 
         def preprocess_function(example):
             texts = (
