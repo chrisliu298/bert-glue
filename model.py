@@ -7,8 +7,8 @@ from torchmetrics.functional import accuracy, f1_score, matthews_corrcoef
 from transformers import AutoConfig, AutoModelForSequenceClassification
 
 
-def build_model(model_name, num_classes, dropout):
-    model_config = AutoConfig.from_pretrained(model_name)
+def build_model(model, num_classes, dropout):
+    model_config = AutoConfig.from_pretrained(model)
     model_config.num_labels = num_classes
     model_config.hidden_dropout_prob = dropout
     model_config.attention_probs_dropout_prob = dropout
@@ -21,7 +21,7 @@ class Model(LightningModule):
     def __init__(self, config):
         super().__init__()
         self.config = config
-        self.model = build_model(config.model_name, config.num_classes, config.dropout)
+        self.model = build_model(config.model, config.num_classes, config.dropout)
 
     def forward(self, input_ids, attention_mask):
         return self.model(input_ids, attention_mask=attention_mask)["logits"]
