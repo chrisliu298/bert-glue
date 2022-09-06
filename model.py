@@ -57,7 +57,7 @@ class Model(LightningModule):
             self,
             input_data=(
                 torch.randint(1, 10, (1, self.config.max_seq_len)),
-                torch.zeros(1, self.config.max_seq_len).to(torch.bool),
+                torch.zeros(1, self.config.max_seq_len),
             ),
             verbose=0,
         )
