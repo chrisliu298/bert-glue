@@ -24,7 +24,8 @@ def parse_args():
     )
     parser.add_argument("--max_seq_len", type=int, default=128)
     # model
-    parser.add_argument("--model", type=str, default="bert-base-uncased")
+    parser.add_argument("--model_name", type=str, default="bert-base-uncased")
+    parser.add_argument("--finetune", action="store_true")
     parser.add_argument("--num_classes", type=int, default=2)
     parser.add_argument("--dropout", type=float, default=0.0)
     # training
