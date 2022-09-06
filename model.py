@@ -7,13 +7,13 @@ from torchmetrics.functional import accuracy, f1_score, matthews_corrcoef
 from transformers import AutoConfig, AutoModelForSequenceClassification
 
 
-def bert(model_name, num_classes, dropout):
-    bert_config = AutoConfig.from_pretrained(model_name)
-    bert_config.num_labels = num_classes
-    bert_config.hidden_dropout_prob = dropout
-    bert_config.attention_probs_dropout_prob = dropout
-    bert_config.classifier_dropout = dropout * 2
-    model = AutoModelForSequenceClassification.from_config(bert_config)
+def build_model(model_name, num_classes, dropout):
+    model_config = AutoConfig.from_pretrained(model_name)
+    model_config.num_labels = num_classes
+    model_config.hidden_dropout_prob = dropout
+    model_config.attention_probs_dropout_prob = dropout
+    model_config.classifier_dropout = dropout * 2
+    model = AutoModelForSequenceClassification.from_config(model_config)
     return model
 
 
@@ -21,7 +21,7 @@ class Model(LightningModule):
     def __init__(self, config):
         super().__init__()
         self.config = config
-        self.model = bert(config.model_name, config.num_classes, config.dropout)
+        self.model = build_model(config.model_name, config.num_classes, config.dropout)
 
     def forward(self, input_ids, attention_mask):
         return self.model(input_ids, attention_mask=attention_mask)["logits"]
