@@ -53,7 +53,14 @@ class Model(LightningModule):
 
     def on_train_start(self):
         # log model parameters
-        model_info = summary(self, input_data=self.model.dummy_inputs, verbose=0)
+        model_info = summary(
+            self,
+            input_data=(
+                torch.randint(1, 10, (1, self.config.max_seq_len)),
+                torch.zeros(1, self.config.max_seq_len).to(torch.bool),
+            ),
+            verbose=0,
+        )
         self.log_dict(
             {
                 "total_params": float(model_info.total_params),
