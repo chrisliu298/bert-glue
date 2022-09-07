@@ -153,12 +153,11 @@ class Model(LightningModule):
             self.trainer.datamodule.train_dataloader()
         )
         warmup_steps = int(training_steps * 0.1)
-        opt = AdamW(
+        opt = torch.optim.AdamW(
             self.model.parameters(),
             lr=self.config.lr,
-            eps=1e-6,
             weight_decay=self.config.wd,
-            correct_bias=False,
+            eps=1e-6,
         )
         sch = get_linear_schedule_with_warmup(opt, warmup_steps, training_steps)
         return {
