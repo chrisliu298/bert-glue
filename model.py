@@ -1,10 +1,14 @@
 import torch
 import torch.nn.functional as F
-import torch.optim as optim
 from pytorch_lightning import LightningModule
 from torchinfo import summary
 from torchmetrics.functional import accuracy, f1_score, matthews_corrcoef
-from transformers import AutoConfig, AutoModelForSequenceClassification
+from transformers import (
+    AdamW,
+    AutoConfig,
+    AutoModelForSequenceClassification,
+    get_linear_schedule_with_warmup,
+)
 
 
 def build_model(model_name, num_classes, dropout, finetune):
@@ -149,32 +153,15 @@ class Model(LightningModule):
             self.trainer.datamodule.train_dataloader()
         )
         warmup_steps = int(training_steps * 0.1)
-        opt = optim.AdamW(
-            self.parameters(), lr=self.config.lr, weight_decay=self.config.wd, eps=1e-6
+        opt = AdamW(
+            self.model.parameters(),
+            lr=self.config.lr,
+            eps=1e-6,
+            weight_decay=self.config.wd,
+            correct_bias=False,
         )
-        sch = self.get_linear_schedule_with_warmup(opt, warmup_steps, training_steps)
+        sch = get_linear_schedule_with_warmup(opt, warmup_steps, training_steps)
         return {
             "optimizer": opt,
             "lr_scheduler": {"scheduler": sch, "interval": "step", "frequency": 1},
         }
-
-    def get_linear_schedule_with_warmup(
-        self, optimizer, num_warmup_steps, num_training_steps, last_epoch=-1
-    ):
-        """
-        From https://github.com/uds-lsv/bert-stable-fine-tuning/blob/3cf27e8667aee9d1c822d747c63ce331b231f283/src/transformers/optimization.py
-
-        Create a schedule with a learning rate that decreases linearly after
-        linearly increasing during a warmup period.
-        """
-
-        def lr_lambda(current_step):
-            if current_step < num_warmup_steps:
-                return float(current_step) / float(max(1, num_warmup_steps))
-            return max(
-                0.0,
-                float(num_training_steps - current_step)
-                / float(max(1, num_training_steps - num_warmup_steps)),
-            )
-
-        return optim.lr_scheduler.LambdaLR(optimizer, lr_lambda, last_epoch)
