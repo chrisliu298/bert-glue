@@ -56,7 +56,8 @@ class Model(LightningModule):
                     f"{stage}_acc": acc,
                     f"{stage}_f1": f1,
                     f"{stage}_mc": mc,
-                }
+                },
+                logger=True,
             )
         return loss, acc, f1, mc
 
